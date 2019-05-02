@@ -44,20 +44,64 @@ namespace Asp_Net_Core_WebAPI_Tut1.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public IActionResult Post([FromBody] Author author)
         {
+            if (author is null)
+            {
+                return BadRequest("Author is null.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            _dataRepository.Add(author);
+            return CreatedAtRoute("GetAuthor", new { Id = author.AuthorID }, null);
         }
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public IActionResult Put(int id, [FromBody] Author author)
         {
+            if (author == null)
+            {
+                return BadRequest("Author is null.");
+            }
+
+            var authorToUpdate = _dataRepository.Get(id);
+            if (authorToUpdate == null)
+            {
+                return NotFound("The Employee record couldn't be found.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            _dataRepository.Update(authorToUpdate, author);
+            return NoContent();
         }
+        //public void Put(int id, [FromQuery]string value)
+        ////public void Put(int id, [FromBody]string value)
+        //{
+        //}
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            var Author = this._dataRepository.Get(id);
+
+            if (null == Author)
+            {
+                return NotFound("The AUthor Record couldn't be found.");
+            }
+
+            this._dataRepository.Delete(Author);
+
+            return NoContent();
         }
     }
 }

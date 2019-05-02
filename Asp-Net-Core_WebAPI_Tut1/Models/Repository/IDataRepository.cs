@@ -11,9 +11,9 @@ namespace Asp_Net_Core_WebAPI_Tut1.Models.Repository
         IEnumerable<TDto> GetAllDto();
         TEntity Get(long id);
         TDto GetDto(long id);
-        //void Add(TEntity entity);
-        //void Update(TEntity entityToUpdate, TEntity entity);
-        //void Delete(TEntity entity);
+        void Add(TEntity entity);
+        void Update(TEntity entityToUpdate, TEntity entity);
+        void Delete(TEntity entity);
     }
 }
 

@@ -115,6 +115,21 @@ namespace Asp_Net_Core_WebAPI_Tut1.Models.DataManager
                        .SingleOrDefault(b => b.BookID == id);
             return BookDtoMapper.MapToDto(book);
         }
+
+        public void Add(Book entity)
+        {
+
+        }
+
+        public void Update(Book entityToUpdate, Book entity)
+        {
+
+        }
+
+        public void Delete(Book entity)
+        {
+
+        }
     }
 
     // Klassen her bør placeres i CategoryDatamanager.cs filen, når den bliver implementeret.

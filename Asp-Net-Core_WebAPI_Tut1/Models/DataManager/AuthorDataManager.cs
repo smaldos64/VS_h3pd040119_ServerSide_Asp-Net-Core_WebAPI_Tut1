@@ -75,6 +75,54 @@ namespace Asp_Net_Core_WebAPI_Tut1.Models.DataManager
                        .SingleOrDefault(b => b.AuthorID == id);
             return AuthorDtoMapper.MapToDto(author);
         }
+
+        public void Add(Author entity)
+        {
+            this._databaseContext.Authors.Add(entity);
+            this._databaseContext.SaveChanges();
+        }
+
+        public void Update(Author entityToUpdate, Author entity)
+        {
+            entityToUpdate = this._databaseContext.Authors
+                .Include(a => a.BookAuthors)
+                .Include(a => a.AuthorContact)
+                .Single(b => b.AuthorID == entityToUpdate.AuthorID);
+
+            entityToUpdate.AuthorName = entity.AuthorName;
+
+            entityToUpdate.AuthorContact.Address = entity.AuthorContact.Address;
+            entityToUpdate.AuthorContact.ContactNumber = entity.AuthorContact.ContactNumber;
+
+            var deletedBooks = entityToUpdate.BookAuthors.Except(entity.BookAuthors).ToList();
+            var addedBooks = entity.BookAuthors.Except(entityToUpdate.BookAuthors).ToList();
+
+            deletedBooks.ForEach(bookToDelete =>
+                entityToUpdate.BookAuthors.Remove(
+                    entityToUpdate.BookAuthors
+                        .First(b => b.BookID == bookToDelete.BookID)));
+
+            foreach (var addedBook in addedBooks)
+            {
+                addedBook.AuthorID = entityToUpdate.AuthorID;
+                this._databaseContext.Entry(addedBook).State = EntityState.Added;
+            }
+
+            try
+            {
+                this._databaseContext.SaveChanges();
+            }
+            catch (Exception error)
+            {
+                var ThisError = error;
+            }
+        }
+
+        public void Delete(Author entity)
+        {
+            this._databaseContext.Remove(entity);
+            this._databaseContext.SaveChanges();
+        }
     }
 
     public class AuthorContactDto
